@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Managam | Campus Exchange & Peer Borrowing Network</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        },
+                        gold: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <!-- Brand Logo -->
+                <a href="#" onclick="switchTab('home')" class="flex items-center gap-2 font-extrabold text-2xl text-emerald-400 tracking-tight">
+                    <i data-lucide="repeat" class="w-7 h-7 text-emerald-400"></i>
+                    Managam
+                </a>
+                
+                <!-- Campus Selector -->
+                <div class="hidden lg:flex items-center gap-2 bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full text-xs font-medium border border-slate-700">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-400"></i>
+                    <span id="activeCampusDisplay">University Campus (.edu)</span>
+                </div>
+            </div>
+
+            <!-- Primary Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <button onclick="switchTab('home')" class="hover:text-emerald-400 transition">Home</button>
+                <button onclick="switchTab('feed')" class="hover:text-emerald-400 transition">Campus Feed</button>
+                <button onclick="switchTab('dashboard')" class="hover:text-emerald-400 transition">My Borrowings</button>
+                <button onclick="switchTab('requests')" class="hover:text-emerald-400 transition">Request Board</button>
+                <button onclick="switchTab('admin')" class="hover:text-emerald-400 transition text-amber-400 flex items-center gap-1">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Admin
+                </button>
+            </nav>
+
+            <!-- User Status & Actions -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-semibold">
+                    <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+                    <span id="goldBridgeCount">Gold Bridge: 1</span>
+                </div>
+                <button onclick="openPostModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>Post Item</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="flex-grow">
+
+        <!-- VIEW 1: LANDING PAGE -->
+        <section id="view-home" class="block">
+            <div class="bg-gradient-to-b from-slate-900 via-slate-800 to-gray-50 text-white py-20 px-4">
+                <div class="max-w-4xl mx-auto text-center">
+                    <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider border border-emerald-500/30">Campus Peer Exchange Network</span>
+                    <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 mb-4 tracking-tight leading-tight">
+                        Give what you can.<br/><span class="text-emerald-400">Get what you need.</span>
+                    </h1>
+                    <p class="text-lg text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+                        Donate textbooks, lend lab gear, request essentials, and borrow items short-term with verified campus peers and automated index tracking.
+                    </p>
+
+                    <div class="max-w-md mx-auto flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-xl shadow-xl">
+                        <input type="email" id="heroEmail" placeholder="student@university.edu" class="flex-1 px-4 py-2.5 text-gray-900 text-sm outline-none rounded-lg">
+                        <button onclick="handleVerification()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                            Verify School Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Pillars Section -->
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <h2 class="text-2xl font-bold text-center text-gray-900 mb-10">Choose How You Exchange on Campus</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-3">
+                            <i data-lucide="gift" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Donate</h3>
+                        <p class="text-xs text-gray-600 mt-1">Pass down textbooks, lamps, and clothing permanently.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-3">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Lend / Borrow</h3>
+                        <p class="text-xs text-gray-600 mt-1">Short-term peer loans for scientific calculators & tools.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-3">
+                            <i data-lucide="message-square-plus" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Request</h3>
+                        <p class="text-xs text-gray-600 mt-1">Broadcast urgent needs directly to your campus feed.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-3">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Resource</h3>
+                        <p class="text-xs text-gray-600 mt-1">Share exam study guides and course lecture notes.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-3">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Experience</h3>
+                        <p class="text-xs text-gray-600 mt-1">Peer tutoring, language practice, and skills.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: CAMPUS EXCHANGE FEED -->
+        <section id="view-feed" class="hidden max-w-7xl mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Sidebar Controls -->
+                <aside class="w-full md:w-64 flex-shrink-0 space-y-6">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+                        <h3 class="font-bold text-sm text-gray-900 uppercase tracking-wider">Exchange Category</h3>
+                        <select id="feedCategoryFilter" onchange="renderFeed()" class="w-full border rounded-lg p-2 text-sm">
+                            <option value="all">All Categories</option>
+                            <option value="Donate">Donate</option>
+                            <option value="Lend">Lend / Borrow</option>
+                            <option value="Resource">Resource</option>
+                            <option value="Experience">Experience</option>
+                        </select>
+
+                        <hr class="border-gray-100">
+
+                        <h3 class="font-bold text-sm text-gray-900 uppercase tracking-wider">Location Privacy Radius</h3>
+                        <div>
+                            <input type="range" min="1" max="10" value="3" class="w-full accent-emerald-600" id="distanceRange" oninput="document.getElementById('distVal').innerText = this.value + ' km'">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1 km</span>
+                                <span id="distVal" class="font-semibold text-emerald-700">3 km</span>
+                                <span>10 km</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Feed Workspace -->
+                <div class="flex-1 space-y-4">
+                    <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
+                        <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                        <input type="text" id="feedSearch" placeholder="Search calculators, textbooks, stationery, course codes..." class="w-full text-sm outline-none" oninput="renderFeed()">
+                    </div>
+
+                    <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dynamic items -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: STUDENT DASHBOARD (BORROWBOX INTEGRATED) -->
+        <section id="view-dashboard" class="hidden max-w-5xl mx-auto px-4 py-8">
+            <div class="mb-6">
+                <div class="text-xs font-bold uppercase tracking-wider text-emerald-600">Student Personal Area</div>
+                <h2 class="text-2xl font-bold text-gray-900">My Borrowing & Exchange Dashboard</h2>
+                <p class="text-sm text-gray-600">Track items you have requested or borrowed using your Student Index Number.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="dashboardIndexInput" placeholder="Enter student index number (e.g., 12345678)" class="flex-1 border rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="loadStudentDashboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition">
+                        View My History
+                    </button>
+                </div>
+
+                <div id="dashboardContent" class="pt-4">
+                    <div class="text-center py-10 bg-gray-50 rounded-lg border border-dashed text-gray-500 text-sm">
+                        Enter your Student Index Number above to retrieve active borrowings and loan history.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: REQUEST BOARD -->
+        <section id="view-requests" class="hidden max-w-5xl mx-auto px-4 py-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Campus Request Board</h2>
+                    <p class="text-sm text-gray-600">Help fellow students by fulfilling their active material or academic requests.</p>
+                </div>
+                <button onclick="openPostModal('Request')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-lg transition font-medium">
+                    Submit Request
+                </button>
+            </div>
+
+            <div id="requestList" class="space-y-4">
+                <!-- Dynamic requests -->
+            </div>
+        </section>
+
+        <!-- VIEW 5: ADMIN MANAGEMENT CONSOLE (BORROWBOX INTEGRATED) -->
+        <section id="view-admin" class="hidden max-w-6xl mx-auto px-4 py-8">
+            <div class="mb-6">
+                <div class="text-xs font-bold uppercase tracking-wider text-amber-600">Administrator Console</div>
+                <h2 class="text-2xl font-bold text-gray-900">Campus Exchange & Borrowing Oversight</h2>
+                <p class="text-sm text-gray-600">Review pending student borrowings, inspect index verification records, and mark items as returned.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Total Requests</div>
+                    <div id="adminTotal" class="text-3xl font-extrabold text-gray-900 mt-1">0</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Awaiting Return</div>
+                    <div id="adminActive" class="text-3xl font-extrabold text-amber-600 mt-1">0</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Successfully Returned</div>
+                    <div id="adminReturned" class="text-3xl font-extrabold text-emerald-600 mt-1">0</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center pb-2 border-b">
+                    <h3 class="font-bold text-gray-900 text-sm">Active System Records</h3>
+                    <div class="flex gap-2">
+                        <button onclick="renderAdminTable()" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs rounded-lg font-medium">Refresh</button>
+                        <button onclick="clearDemoData()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg font-medium">Clear Data</button>
+                    </div>
+                </div>
+                <div id="adminTableContainer" class="overflow-x-auto">
+                    <!-- Admin table injected here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BORROW / REQUEST TRANSACTION MODAL (WITH LIVE CAMERA & VERIFICATION) -->
+    <div id="borrowModal" class="fixed inset-0 bg-slate-900/70 hidden items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-8">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <span class="text-xs font-bold text-emerald-600 uppercase">Verification & Borrow Form</span>
+                    <h3 id="modalItemTitle" class="font-bold text-lg text-gray-900">Borrow Item</h3>
+                </div>
+                <button onclick="closeModal('borrowModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <form id="borrowForm" onsubmit="handleBorrowSubmit(event)" class="space-y-3 text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="borrowerName" required placeholder="e.g. Ama Mensah" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Student Index Number</label>
+                        <input type="text" id="borrowerIndex" required placeholder="e.g. 12345678" minlength="4" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Hall / Hostel</label>
+                        <input type="text" id="borrowerHall" required placeholder="e.g. Casely Hayford Hall" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Contact Phone</label>
+                        <input type="tel" id="borrowerPhone" required placeholder="e.g. 024 000 0000" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Borrowing Duration</label>
+                        <select id="borrowPeriod" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option>1 day</option>
+                            <option>2 days</option>
+                            <option>3 days</option>
+                            <option>1 week</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Expected Return Date</label>
+                        <input type="date" id="borrowReturnDate" required class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <!-- Verification & Camera Capture Box -->
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
+                    <div class="font-bold text-xs uppercase text-gray-700">Identity Verification (BorrowBox Feature)</div>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" id="hasIdCheck" required class="rounded text-emerald-600 focus:ring-emerald-500">
+                        <span>I confirm I will present my Student ID upon item handoff.</span>
+                    </label>
+                    
+                    <div class="space-y-2 pt-1 border-t border-gray-200">
+                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                            <input type="checkbox" id="consentCheck" class="rounded text-emerald-600 focus:ring-emerald-500">
+                            <span>Enable optional selfie verification for this session.</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="startCamera()" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs rounded-lg font-medium">Open Camera</button>
+                            <button type="button" onclick="capturePhoto()" class="px-3 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs rounded-lg font-medium">Take Selfie</button>
+                        </div>
+                        <video id="cameraVideo" autoplay playsinline class="hidden w-full max-h-40 object-cover rounded-lg bg-black"></video>
+                        <canvas id="photoCanvas" class="hidden"></canvas>
+                        <img id="photoPreview" class="hidden w-20 h-20 object-cover rounded-lg border border-emerald-500">
+                        <div id="cameraStatus" class="text-xs text-gray-500">Camera is off.</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal('borrowModal')" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-sm">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CREATE ITEM / POST MODAL -->
+    <div id="postModal" class="fixed inset-0 bg-slate-900/70 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-gray-900">Post Item or Request</h3>
+                <button onclick="closeModal('postModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Exchange Category</label>
+                    <select id="postPillar" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="Donate">Donate (Permanent Gift)</option>
+                        <option value="Lend">Lend / Borrow (Temporary Equipment Loan)</option>
+                        <option value="Request">Request (Ask Campus Network)</option>
+                        <option value="Resource">Resource (Study Notes / Outlines)</option>
+                        <option value="Experience">Experience (Tutoring / Skill Sharing)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Title</label>
+                    <input type="text" id="postTitle" placeholder="e.g. Scientific Calculator or Chemistry Textbook" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Course Code (Optional)</label>
+                    <input type="text" id="postCourse" placeholder="e.g. MATH 101" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Description / Borrowing Terms</label>
+                    <textarea id="postDesc" rows="3" placeholder="Condition details, pickup spot, or return expectations..." class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t">
+                <button onclick="closeModal('postModal')" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm">Cancel</button>
+                <button onclick="submitNewPost()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium">Publish Listing</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-8 mt-12 text-xs">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 font-bold text-emerald-400 text-base">
+                <i data-lucide="repeat" class="w-5 h-5 text-emerald-400"></i>
+                Managam Network
+            </div>
+            <div>© 2026 Managam Campus Exchange • Combined Ecosystem Prototype</div>
+            <div class="flex gap-4">
+                <a href="#" onclick="switchTab('feed')" class="hover:underline">Feed</a>
+                <a href="#" onclick="switchTab('dashboard')" class="hover:underline">Dashboard</a>
+                <a href="#" onclick="switchTab('admin')" class="hover:underline">Admin Panel</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- System JavaScript Engine -->
+    <script>
+        // Storage Keys
+        const STORAGE_KEY = 'managam_exchange_requests';
+
+        // Core System State
+        let items = [
+            { id: 1, pillar: 'Lend', title: 'Scientific Calculator', course: 'MATH 101', desc: 'For math, economics, and science calculations.', fee: 'Free / Campus Borrow', icon: '🧮', user: 'Alex M.', goldBridges: 2, dist: '0.4 km' },
+            { id: 2, pillar: 'Donate', title: 'Course Textbook: Microeconomics', course: 'ECON 102', desc: 'Slightly used textbook available for permanent donation.', fee: 'Free Gift', icon: '📚', user: 'Sarah K.', goldBridges: 3, dist: '0.8 km' },
+            { id: 3, pillar: 'Lend', title: 'Geometry Set & Ruler', course: 'ENG 110', desc: 'Complete geometry set available for temporary borrowing.', fee: 'Free / Campus Borrow', icon: '📐', user: 'David P.', goldBridges: 1, dist: '0.2 km' },
+            { id: 4, pillar: 'Resource', title: 'CS101 Complete Lecture & Exam Notes', course: 'CS 101', desc: 'Comprehensive PDF outlines and practice question solutions.', fee: 'Free Download', icon: '💾', user: 'Elena R.', goldBridges: 5, dist: '0.1 km' }
+        ];
+
+        let selectedItemForBorrow = null;
+        let mediaStream = null;
+
+        // Utility: Get Requests from LocalStorage
+        function getStoredRequests() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } 
+            catch(e) { return []; }
+        }
+
+        // Utility: Save Requests to LocalStorage
+        function saveRequests(rows) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); } 
+            catch(e) { alert('Local browser storage unavailable.'); }
+        }
+
+        // View Navigation Switcher
+        function switchTab(tabId) {
+            ['home', 'feed', 'dashboard', 'requests', 'admin'].forEach(id => {
+                const el = document.getElementById('view-' + id);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+            
+            if(tabId === 'feed') renderFeed();
+            if(tabId === 'requests') renderRequests();
+            if(tabId === 'admin') renderAdminTable();
+        }
+
+        // Email Verification Handler
+        function handleVerification() {
+            const email = document.getElementById('heroEmail').value;
+            if(!email || !email.includes('@')) {
+                alert('Please enter a valid school email address.');
+                return;
+            }
+            document.getElementById('activeCampusDisplay').innerText = email.split('@')[1] + ' (Verified)';
+            alert(`Verification link dispatched to ${email}! Redirecting to Campus Feed...`);
+            switchTab('feed');
+        }
+
+        // Feed Renderer
+        function renderFeed() {
+            const grid = document.getElementById('feedGrid');
+            const query = document.getElementById('feedSearch').value.toLowerCase();
+            const catFilter = document.getElementById('feedCategoryFilter').value;
+            grid.innerHTML = '';
+
+            const filtered = items.filter(x => {
+                const matchesCat = (catFilter === 'all' || x.pillar === catFilter);
+                const matchesQuery = (x.title + ' ' + x.desc + ' ' + x.course).toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+
+            filtered.forEach(x => {
+                grid.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${x.pillar === 'Donate' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">${x.pillar}</span>
+                                <span class="text-xs text-gray-500 font-medium">${x.dist}</span>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-base mb-1">${x.title}</h4>
+                            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded font-mono mb-2">${x.course}</span>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-4">${x.desc}</p>
+                        </div>
+                        <div class="border-t pt-3 flex items-center justify-between">
+                            <div class="text-xs text-gray-700 font-medium">
+                                <span>${x.user}</span>
+                                <span class="text-amber-600 font-bold">(${x.goldBridges} Gold)</span>
+                            </div>
+                            <button onclick="openBorrowModal('${x.title.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                                Request / Borrow
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Request Board Renderer
+        function renderRequests() {
+            const list = document.getElementById('requestList');
+            const rows = getStoredRequests().filter(r => r.pillar === 'Request');
+            list.innerHTML = '';
+
+            if(!rows.length) {
+                list.innerHTML = `<div class="bg-white p-8 rounded-xl border border-gray-200 text-center text-gray-500 text-sm">No active peer requests currently posted. Use "Submit Request" to broadcast one.</div>`;
+                return;
+            }
+
+            rows.forEach(r => {
+                list.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase">Request</span>
+                            <h4 class="font-bold text-gray-900 text-base mt-1">${r.item}</h4>
+                            <div class="text-xs text-gray-500">Requested by <span class="font-semibold text-gray-700">${r.name}</span> (Index: ${r.index}) • Hostel: ${r.hall}</div>
+                        </div>
+                        <button onclick="alert('Message thread opened with ${r.name} to fulfill this request!')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+                            I Can Help
+                        </button>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Student Dashboard Renderer (BorrowBox Index Lookup)
+        function loadStudentDashboard() {
+            const idx = document.getElementById('dashboardIndexInput').value.trim();
+            const container = document.getElementById('dashboardContent');
+            if(!idx) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">Please enter a Student Index Number first.</div>`;
+                return;
+            }
+
+            const rows = getStoredRequests().filter(r => r.index.toLowerCase() === idx.toLowerCase());
+            if(!rows.length) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">No request records found for student index number: <strong>${idx}</strong></div>`;
+                return;
+            }
+
+            const active = rows.filter(r => r.status !== 'Returned').length;
+            container.innerHTML = `
+                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+                    <div class="bg-gray-50 p-3 rounded-lg border"><div class="text-xs text-gray-500">Total Requests</div><div class="text-xl font-bold text-gray-800">${rows.length}</div></div>
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-200"><div class="text-xs text-amber-700">Awaiting Return</div><div class="text-xl font-bold text-amber-700">${active}</div></div>
+                    <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200"><div class="text-xs text-emerald-700">Returned</div><div class="text-xl font-bold text-emerald-700">${rows.length - active}</div></div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b bg-gray-50 text-gray-500 uppercase">
+                                <th class="p-2">Ref</th>
+                                <th class="p-2">Item</th>
+                                <th class="p-2">Return Date</th>
+                                <th class="p-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(r => `
+                                <tr class="border-b">
+                                    <td class="p-2 font-mono">${r.ref}</td>
+                                    <td class="p-2 font-semibold">${r.item}</td>
+                                    <td class="p-2">${r.returnDate}</td>
+                                    <td class="p-2">
+                                        <span class="px-2 py-0.5 rounded-full font-bold ${r.status === 'Returned' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${r.status}</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Admin Table Renderer (BorrowBox Feature)
+        function renderAdminTable() {
+            const rows = getStoredRequests();
+            document.getElementById('adminTotal').innerText = rows.length;
+            document.getElementById('adminActive').innerText = rows.filter(r => r.status !== 'Returned').length;
+            document.getElementById('adminReturned').innerText = rows.filter(r => r.status === 'Returned').length;
+
+            const container = document.getElementById('adminTableContainer');
+            if(!rows.length) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm">No transaction requests recorded in system.</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b bg-gray-50 text-gray-500 uppercase">
+                            <th class="p-2.5">Ref</th>
+                            <th class="p-2.5">Student</th>
+                            <th class="p-2.5">Index</th>
+                            <th class="p-2.5">Item</th>
+                            <th class="p-2.5">Return Date</th>
+                            <th class="p-2.5">Status / Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr class="border-b">
+                                <td class="p-2.5 font-mono">${r.ref}</td>
+                                <td class="p-2.5 font-medium">${r.name}</td>
+                                <td class="p-2.5">${r.index}</td>
+                                <td class="p-2.5 font-semibold">${r.item}</td>
+                                <td class="p-2.5">${r.returnDate}</td>
+                                <td class="p-2.5">
+                                    ${r.status === 'Returned' ? 
+                                        `<span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold">Returned</span>` : 
+                                        `<button onclick="markReturned('${r.ref}')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-lg transition">Mark Returned</button>`
+                                    }
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Action: Mark Item as Returned in Admin
+        function markReturned(ref) {
+            const rows = getStoredRequests();
+            const target = rows.find(r => r.ref === ref);
+            if(target) {
+                target.status = 'Returned';
+                saveRequests(rows);
+                renderAdminTable();
+                
+                // Increment Gold Bridge Counter
+                const goldDisplay = document.getElementById('goldBridgeCount');
+                if(goldDisplay) goldDisplay.innerText = "Gold Bridge: 2";
+            }
+        }
+
+        function clearDemoData() {
+            if(confirm('Clear all stored Managam exchange and borrowing requests?')) {
+                saveRequests([]);
+                renderAdminTable();
+            }
+        }
+
+        // Camera Functions (BorrowBox Camera Feature)
+        async function startCamera() {
+            if(!document.getElementById('consentCheck').checked) {
+                alert('Please check the selfie consent box first.');
+                return;
+            }
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = mediaStream;
+                video.classList.remove('hidden');
+                document.getElementById('cameraStatus').innerText = 'Camera active. Frame yourself and tap "Take Selfie".';
+            } catch(e) {
+                document.getElementById('cameraStatus').innerText = 'Camera unavailable or permission denied.';
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            if(!mediaStream || !video.videoWidth) {
+                alert('Start camera first.');
+                return;
+            }
+            const canvas = document.getElementById('photoCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            const preview = document.getElementById('photoPreview');
+            preview.src = canvas.toDataURL('image/jpeg', 0.8);
+            preview.classList.remove('hidden');
+            document.getElementById('cameraStatus').innerText = 'Selfie captured for this request session!';
+        }
+
+        function stopCamera() {
+            if(mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            const video = document.getElementById('cameraVideo');
+            if(video) video.classList.add('hidden');
+        }
+
+        // Modal Controls
+        function openBorrowModal(itemTitle) {
+            selectedItemForBorrow = itemTitle;
+            document.getElementById('modalItemTitle').innerText = itemTitle;
+            document.getElementById('borrowForm').reset();
+            
+            // Set default return date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('borrowReturnDate').value = tomorrow.toISOString().slice(0, 10);
+            
+            openModal('borrowModal');
+        }
+
+        function handleBorrowSubmit(e) {
+            e.preventDefault();
+            const ref = 'MN-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+            const newRequest = {
+                ref,
+                pillar: 'Lend',
+                item: selectedItemForBorrow || 'Campus Essential',
+                name: document.getElementById('borrowerName').value,
+                index: document.getElementById('borrowerIndex').value,
+                hall: document.getElementById('borrowerHall').value,
+                phone: document.getElementById('borrowerPhone').value,
+                period: document.getElementById('borrowPeriod').value,
+                returnDate: document.getElementById('borrowReturnDate').value,
+                status: 'Awaiting Return',
+                createdAt: new Date().toLocaleString()
+            };
+
+            const rows = getStoredRequests();
+            rows.unshift(newRequest);
+            saveRequests(rows);
+
+            stopCamera();
+            closeModal('borrowModal');
+            alert(`Borrowing request submitted successfully!\nReference: ${ref}\nUse Index Number "${newRequest.index}" in the Student Dashboard to track returns.`);
+            
+            document.getElementById('dashboardIndexInput').value = newRequest.index;
+            switchTab('dashboard');
+            loadStudentDashboard();
+        }
+
+        function openPostModal(defaultPillar) {
+            if(defaultPillar) document.getElementById('postPillar').value = defaultPillar;
+            openModal('postModal');
+        }
+
+        function submitNewPost() {
+            const pillar = document.getElementById('postPillar').value;
+            const title = document.getElementById('postTitle').value;
+            const course = document.getElementById('postCourse').value || 'GENERAL';
+            const desc = document.getElementById('postDesc').value;
+
+            if(!title || !desc) {
+                alert('Please complete the title and description fields.');
+                return;
+            }
+
+            if(pillar === 'Request') {
+                const ref = 'MN-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+                const newRequest = {
+                    ref,
+                    pillar: 'Request',
+                    item: title,
+                    name: 'Verified Student',
+                    index: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
+                    hall: 'On Campus',
+                    phone: 'N/A',
+                    period: 'N/A',
+                    returnDate: 'N/A',
+                    status: 'Active Request',
+                    createdAt: new Date().toLocaleString()
+                };
+                const rows = getStoredRequests();
+                rows.unshift(newRequest);
+                saveRequests(rows);
+                closeModal('postModal');
+                switchTab('requests');
+                return;
+            }
+
+            items.unshift({
+                id: Date.now(),
+                pillar,
+                title,
+                course,
+                desc,
+                fee: 'Free / Campus Exchange',
+                icon: '📦',
+                user: 'You (Verified)',
+                goldBridges: 1,
+                dist: '0.1 km'
+            });
+
+            closeModal('postModal');
+            switchTab('feed');
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+        function closeModal(id) { stopCamera(); document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+        // Initializer
+        window.onload = function() {
+            lucide.createIcons();
+            renderFeed();
+        };
+    </script>
+</body>
+</html>
